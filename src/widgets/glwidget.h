@@ -7,7 +7,7 @@
 #ifndef GLES
 #include <QGLWidget>
 #else
-#include <QOpenGLWidget>
+#include <QGLWidget>
 #endif
 
 #include <QTimer>
@@ -15,7 +15,7 @@
 #include "drawers/shaderdrawable.h"
 
 #ifdef GLES
-class GLWidget : public QOpenGLWidget
+class GLWidget : public QGLWidget
 #else
 class GLWidget : public QGLWidget, protected QOpenGLFunctions
 #endif

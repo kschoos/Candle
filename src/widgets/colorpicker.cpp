@@ -31,7 +31,7 @@ void ColorPicker::setColor(const QColor &color)
 
 void ColorPicker::onButtonClicked()
 {
-    QColor color = QColorDialog::getColor(m_color, this);
+    QColor color = QColorDialog::getColor(m_color, this, QString("Pick Color..."), QColorDialog::DontUseNativeDialog);
 
     if (color.isValid()) {
         setColor(color);

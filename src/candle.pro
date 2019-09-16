@@ -23,6 +23,7 @@ unix:!macx {
 contains(QT_CONFIG, opengles.) {
     warning("GL ES detected. VAO will be disabled.")
     DEFINES += GLES
+    INCLUDEPATH += /opt/vc/include
     INSTALLS += target
     target.path = /home/pi
 }

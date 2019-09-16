@@ -13,9 +13,10 @@
 #endif
 
 #define ZOOMSTEP 1.1
+#define GL_PROGRAM_POINT_SIZE 1
 
 #ifdef GLES
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), m_shaderProgram(0)
+GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_shaderProgram(0)
 #else
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent), m_shaderProgram(0)
 #endif
@@ -572,7 +573,7 @@ void GLWidget::timerEvent(QTimerEvent *te)
 #endif
     } else {
 #ifdef GLES
-        QOpenGLWidget::timerEvent(te);
+        QGLWidget::timerEvent(te);
 #else
         QGLWidget::timerEvent(te);
 #endif
