@@ -1608,8 +1608,7 @@ void frmMain::on_cmdFileOpen_clicked()
     if (!m_heightMapMode) {
         if (!saveChanges(false)) return;
 
-        QString fileName  = QFileDialog::getOpenFileName(this, tr("Open"), m_lastFolder,
-                                   tr("G-Code files (*.nc *.ncc *.ngc *.tap *.txt);;All files (*.*)"));
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Open"), QString("/"), tr("G-Code files (*.nc *.ncc *.ngc *.tap *.txt);;All files (*.*)"), 0, QFileDialog::DontUseNativeDialog);
 
         if (!fileName.isEmpty()) m_lastFolder = fileName.left(fileName.lastIndexOf(QRegExp("[/\\\\]+")));
 
@@ -2787,7 +2786,9 @@ bool frmMain::eventFilter(QObject *obj, QEvent *event)
 {
     // Main form events
     if (1 /*obj == this || obj == ui->tblProgram || obj == ui->cboJogStep || obj == ui->cboJogFeed*/) {
-
+        if(event->type() == QEvent::KeyPress) {
+            qDebug() << "key pressed:" << static_cast<QKeyEvent*>(event)->key();
+        }
         // Jog on keyboard control
         if (!m_processingFile && ui->chkKeyboardControl->isChecked() &&
                 (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
@@ -2818,36 +2819,38 @@ bool frmMain::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
-            if (!m_processingFile && keyEvent->key() == Qt::Key_ScrollLock && obj == this) {
+            if (!m_processingFile && (keyEvent->key() == Qt::Key_ScrollLock || keyEvent->key() == Qt::Key_F1) && obj == this) {
                 ui->chkKeyboardControl->toggle();
                 if (!ui->chkKeyboardControl->isChecked()) ui->cboCommand->setFocus();
             }
 
-            if (!m_processingFile && ui->chkKeyboardControl->isChecked()) {
-                if (keyEvent->key() == Qt::Key_7) {
-                    ui->cboJogStep->setCurrentPrevious();
-                } else if (keyEvent->key() == Qt::Key_1) {
-                    ui->cboJogStep->setCurrentNext();
-                } else if (keyEvent->key() == Qt::Key_Minus) {
-                    ui->cboJogFeed->setCurrentPrevious();
-                } else if (keyEvent->key() == Qt::Key_Plus) {
-                    ui->cboJogFeed->setCurrentNext();
-                } else if (keyEvent->key() == Qt::Key_5) {
-                    on_cmdStop_clicked();
-                } else if (keyEvent->key() == Qt::Key_0) {
-                    on_cmdSpindle_clicked(!ui->cmdSpindle->isChecked());
-                } else if (keyEvent->key() == Qt::Key_Asterisk) {
-                    ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() + 1);
-                } else if (keyEvent->key() == Qt::Key_Slash) {
-                    ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() - 1);
-                } else if (keyEvent->key() == Qt::Key_Z) {
-                    on_cmdZeroZ_clicked();
-                } else if (keyEvent->key() == Qt::Key_X) {
-                    on_cmdZeroXY_clicked();
-                } else if (keyEvent->key() == Qt::Key_H) {
-                    on_cmdHome_clicked();
-                } else if (keyEvent->key() == Qt::Key_P) {
-                    on_cmdTouch_clicked();
+            if (!m_processingFile) {
+                if (ui->chkKeyboardControl->isChecked()) {
+                    if (keyEvent->key() == Qt::Key_7) {
+                        ui->cboJogStep->setCurrentPrevious();
+                    } else if (keyEvent->key() == Qt::Key_1) {
+                        ui->cboJogStep->setCurrentNext();
+                    } else if (keyEvent->key() == Qt::Key_Minus) {
+                        ui->cboJogFeed->setCurrentPrevious();
+                    } else if (keyEvent->key() == Qt::Key_Plus) {
+                        ui->cboJogFeed->setCurrentNext();
+                    } else if (keyEvent->key() == Qt::Key_5) {
+                        on_cmdStop_clicked();
+                    } else if (keyEvent->key() == Qt::Key_0) {
+                        on_cmdSpindle_clicked(!ui->cmdSpindle->isChecked());
+                    } else if (keyEvent->key() == Qt::Key_Asterisk) {
+                        ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() + 1);
+                    } else if (keyEvent->key() == Qt::Key_Slash) {
+                        ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() - 1);
+                    } else if (keyEvent->key() == Qt::Key_Z) {
+                        on_cmdZeroZ_clicked();
+                    } else if (keyEvent->key() == Qt::Key_X) {
+                        on_cmdZeroXY_clicked();
+                    } else if (keyEvent->key() == Qt::Key_H) {
+                        on_cmdHome_clicked();
+                    } else if (keyEvent->key() == Qt::Key_P) {
+                        on_cmdTouch_clicked();
+                    }
                 }
             }
 
