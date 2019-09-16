@@ -1831,6 +1831,12 @@ void frmMain::clearTable()
     m_programModel.insertRow(0);
 }
 
+void frmMain::on_cmdHeightMapGotoXY_clicked()
+{
+    QRectF rect = borderRectFromTextboxes();
+    sendCommand(QString("G21G90G00X%1Y%2").arg(rect.left()).arg(rect.top()));
+}
+
 void frmMain::on_cmdFit_clicked()
 {
     ui->glwVisualizer->fitDrawable(m_currentDrawer);
@@ -2780,7 +2786,7 @@ void frmMain::on_grpUserCommands_toggled(bool checked)
 bool frmMain::eventFilter(QObject *obj, QEvent *event)
 {
     // Main form events
-    if (obj == this || obj == ui->tblProgram || obj == ui->cboJogStep || obj == ui->cboJogFeed) {
+    if (1 /*obj == this || obj == ui->tblProgram || obj == ui->cboJogStep || obj == ui->cboJogFeed*/) {
 
         // Jog on keyboard control
         if (!m_processingFile && ui->chkKeyboardControl->isChecked() &&
@@ -2788,7 +2794,7 @@ bool frmMain::eventFilter(QObject *obj, QEvent *event)
                 && !static_cast<QKeyEvent*>(event)->isAutoRepeat()) {
 
             switch (static_cast<QKeyEvent*>(event)->key()) {
-            case Qt::Key_4:                
+            case Qt::Key_4:
                 if (event->type() == QEvent::KeyPress) emit ui->cmdXMinus->pressed(); else emit ui->cmdXMinus->released();
                 break;
             case Qt::Key_6:
@@ -2834,6 +2840,14 @@ bool frmMain::eventFilter(QObject *obj, QEvent *event)
                     ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() + 1);
                 } else if (keyEvent->key() == Qt::Key_Slash) {
                     ui->slbSpindle->setSliderPosition(ui->slbSpindle->sliderPosition() - 1);
+                } else if (keyEvent->key() == Qt::Key_Z) {
+                    on_cmdZeroZ_clicked();
+                } else if (keyEvent->key() == Qt::Key_X) {
+                    on_cmdZeroXY_clicked();
+                } else if (keyEvent->key() == Qt::Key_H) {
+                    on_cmdHome_clicked();
+                } else if (keyEvent->key() == Qt::Key_P) {
+                    on_cmdTouch_clicked();
                 }
             }
 
@@ -3160,15 +3174,23 @@ bool frmMain::updateHeightMapGrid()
 
     m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G21G90F%1G0Z%2").
                          arg(m_settings->heightmapProbingFeed()).arg(ui->txtHeightMapGridZTop->value()));
-    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G0X0Y0"));
-//                         .arg(ui->txtHeightMapGridZTop->value()));
-    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G38.2Z%1")
-                         .arg(ui->txtHeightMapGridZBottom->value()));
-    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G0Z%1")
-                         .arg(ui->txtHeightMapGridZTop->value()));
 
     double x, y;
 
+    x = borderRect.left();
+    y = borderRect.top();
+
+    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G0X%1Y%2")
+                         .arg(x, 0, 'f', 3).arg(y, 0, 'f', 3));
+//                         .arg(ui->txtHeightMapGridZTop->value()));
+    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G38.2Z%1")
+                         .arg(ui->txtHeightMapGridZBottom->value()));
+    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G92 Z0"));
+    m_probeModel.setData(m_probeModel.index(m_probeModel.rowCount() - 1, 1), QString("G0Z%1")
+                         .arg(ui->txtHeightMapGridZTop->value()));
+
+
+    // CHANGED
     for (int i = 0; i < gridPointsY; i++) {
         y = borderRect.top() + gridStepY * i;
         for (int j = 0; j < gridPointsX; j++) {
@@ -3181,6 +3203,7 @@ bool frmMain::updateHeightMapGrid()
                                  .arg(ui->txtHeightMapGridZTop->value()));
         }
     }
+
 
     m_programLoading = false;
 

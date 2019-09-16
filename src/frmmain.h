@@ -110,6 +110,7 @@ private slots:
     void on_actFileExit_triggered();
     void on_cmdFileOpen_clicked();
     void on_cmdFit_clicked();
+    void on_cmdHeightMapGotoXY_clicked();
     void on_cmdFileSend_clicked();
     void onTableCellChanged(QModelIndex i1, QModelIndex i2);
     void on_actServiceSettings_triggered();

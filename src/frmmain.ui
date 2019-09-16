@@ -587,6 +587,13 @@ QSlider::handle:horizontal:hover {
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QToolButton" name="cmdHeightMapGotoXY">
+                <property name="text">
+                 <string>Goto (X, Y)</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1540,9 +1547,9 @@ QSlider::handle:horizontal:hover {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-416</y>
+            <y>0</y>
             <width>228</width>
-            <height>691</height>
+            <height>658</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -2616,7 +2623,7 @@ padding-right: 8;</string>
      <x>0</x>
      <y>0</y>
      <width>952</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="mnuFile">
